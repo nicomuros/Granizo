@@ -1,6 +1,6 @@
 <?php
 $tol=60;
-$tamaño_nube=1;
+$tamaï¿½o_nube=1;
 $pasos_nube=5;
 $rgb=0;
 $r=0;
@@ -62,7 +62,8 @@ for ($numero=0;$numero<$contar;$numero++){
     $px=$xnube[$numero];
     $py=$ynube[$numero];
 //    echo "Pixel seleccionado para analizar:   $px - $py<br />";
-    if (hay_coincidencias($px,$py,$dbpx,$dbpy,$pixel_total)){}else{
+    if (hay_coincidencias($px,$py,$dbpx,$dbpy,$pixel_total)){}
+    else{
 //        echo "El pixel no esta dentro del enjambre<br />";
         echo "SE HA ENCONTRADO UNA NUEVA NUBE<br />";
         

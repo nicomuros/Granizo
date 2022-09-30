@@ -1,3 +1,4 @@
+from operator import truediv
 from PIL import Image 
 
 '''
@@ -63,6 +64,51 @@ for x in range(340,420):
         if(analizarPixel(x,y,image_rgb)): #Analizo el pixel
             pixelPiedra.append([x,y])
 
-print(pixelPiedra[0])
+#print (pixelPiedra[0])
+x = pixelPiedra[0][0]
+y = pixelPiedra[0][1]
+
+print(f'''
+    Pixel base: {x},{y}
+    Pixel {x-1},{y}: {[x-1,y] in pixelPiedra}
+    Pixel {x+1},{y}: {[x+1,y] in pixelPiedra}
+    Pixel {x},{y-1}: {[x,y-1] in pixelPiedra}
+    Pixel {x},{y+1}: {[x,y+1] in pixelPiedra}
+''')
+nube=[pixelPiedra[0]]
+
+for indice,i in enumerate(nube):
+    x=nube[indice][0]
+    y=nube[indice][1]
+    if (([x+1,y] in pixelPiedra) and ([x+1,y] not in nube)):
+        nube.append([x+1,y])
+    if ([x-1,y] in pixelPiedra and ([x-1,y] not in nube)):
+        nube.append([x-1,y])
+    if ([x,y+1] in pixelPiedra and ([x,y+1] not in nube)):
+        nube.append([x,y+1])
+    if ([x,y-1] in pixelPiedra and ([x,y-1] not in nube)):
+        nube.append([x,y-1])
+
+def minimo(nube,eje):
+    lista=[]
+    for i in range(len(nube)):
+        if (nube[i][eje] not in lista):
+            lista.append(nube[i][eje])
+    return min(lista)
+def maximo(nube,eje):
+    lista=[]
+    for i in range(len(nube)):
+        if (nube[i][eje] not in lista):
+            lista.append(nube[i][eje])
+    return max(lista)
+minx=minimo(nube,0)
+miny=minimo(nube,1)
+maxx=maximo(nube,0)
+maxy=maximo(nube,1)
+print(f'''
+    Inicio: [{minx},{miny}]
+    Fin: [{maxx},{maxy}]
+''')
+
 
 
