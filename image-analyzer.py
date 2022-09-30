@@ -64,19 +64,16 @@ for x in range(340,420):
         if(analizarPixel(x,y,image_rgb)): #Analizo el pixel
             pixelPiedra.append([x,y])
 
-#print (pixelPiedra[0])
-x = pixelPiedra[0][0]
-y = pixelPiedra[0][1]
 
-print(f'''
-    Pixel base: {x},{y}
-    Pixel {x-1},{y}: {[x-1,y] in pixelPiedra}
-    Pixel {x+1},{y}: {[x+1,y] in pixelPiedra}
-    Pixel {x},{y-1}: {[x,y-1] in pixelPiedra}
-    Pixel {x},{y+1}: {[x,y+1] in pixelPiedra}
-''')
+'''
+En este apartado, lo que hago es analizar la nube, para encontrar el minimo y le maximo. Primero agrego el pixel de la primer
+nube a la lista [nube]. Luego, y gracias al modulo enumerate(nube), voy analizando pixel por pixel tanto a la izquierda, a la derecha
+arriba y abajo... si el pixel en cuestion SE ENCUENTRA en la lista de pixeles [pixelPiedra], y NO SE ENCUENTRA en la nube, lo agrego.
+El ciclo se va a cumplir hasta que ya no encuentre más pixeles... ésto lo logro gracias al ya mencionado enumerate... me permite trabajar
+en un rango no definido, o sea que si agrego un nuevo elemento a la lista, lo va a recorrer (al contrario de range(len(list)), que
+me recorre una lista con elementos YA definidos)
+'''
 nube=[pixelPiedra[0]]
-
 for indice,i in enumerate(nube):
     x=nube[indice][0]
     y=nube[indice][1]
