@@ -1,5 +1,4 @@
-from operator import truediv
-from PIL import Image 
+from PIL import Image, ImageDraw
 
 '''
 Voy a usar la libreria PIL para poder analizar las imagenes, para instalarla tengo que poner "pip install pillow".
@@ -8,10 +7,9 @@ red_image_rgb = red_image.convert("RGB") --> creo un array[x][y] con la informac
 rgb_pixel_value = red_image_rgb.getpixel((10,15)) --> de esta forma obtengo los valores rgb del pixel, y lo cargo a rgb_pixel_value
 print(rgb_pixel_value) #Prints (255, 0, 0)
 '''
-
-def cargarImagen(url_imagen):
-    image = Image.open(url_imagen)
-    return(image.convert("RGB"))
+url_imagen="images/1918.gif"
+image = Image.open(url_imagen)
+image_rgb=image.convert("RGB") #Cargo la imagen a la variable para poder trabajar con ella
 
 '''
 analizarPixel funciona recibiendo las coordenadas del pixel y la imagen y extrae los valores rgb. Devuelve True si el pixel
@@ -54,13 +52,12 @@ def analizarPixel(x, y, imagen):
 
 #340 54 inicio
 #420 120 fin
-url_imagen="images/1918.gif"
-image_rgb=cargarImagen(url_imagen) #Cargo la imagen a la variable para poder trabajar con ella
+
 
 #Creo una lista con TODOS los pixeles que son piedras
 pixelPiedra=[]
-for x in range(340,420):
-    for y in range(54,121):
+for x in range(110,700):
+    for y in range(55,450):
         if(analizarPixel(x,y,image_rgb)): #Analizo el pixel
             pixelPiedra.append([x,y])
 
@@ -72,40 +69,66 @@ arriba y abajo... si el pixel en cuestion SE ENCUENTRA en la lista de pixeles [p
 El ciclo se va a cumplir hasta que ya no encuentre más pixeles... ésto lo logro gracias al ya mencionado enumerate... me permite trabajar
 en un rango no definido, o sea que si agrego un nuevo elemento a la lista, lo va a recorrer (al contrario de range(len(list)), que
 me recorre una lista con elementos YA definidos)
+Elimino los pixeles cargados para que a la proxima iteración empiece con una nueva nube
+Luego calculo los minimos y máximos, y los agrego a una lista
 '''
-nube=[pixelPiedra[0]]
-for indice,i in enumerate(nube):
-    x=nube[indice][0]
-    y=nube[indice][1]
-    if (([x+1,y] in pixelPiedra) and ([x+1,y] not in nube)):
-        nube.append([x+1,y])
-    if ([x-1,y] in pixelPiedra and ([x-1,y] not in nube)):
-        nube.append([x-1,y])
-    if ([x,y+1] in pixelPiedra and ([x,y+1] not in nube)):
-        nube.append([x,y+1])
-    if ([x,y-1] in pixelPiedra and ([x,y-1] not in nube)):
-        nube.append([x,y-1])
+listaNubes=[]
+while(len(pixelPiedra)>0):
+    nube=[pixelPiedra[0]]
+    for indice,i in enumerate(nube):
+        x=nube[indice][0]
+        y=nube[indice][1]
+        pixelPiedra.remove([x,y])#Elimino de la lista de pixelPiedra el pixel cargado en la nube
+        
+        for j in range (1,5):
+            if (([x+j,y] in pixelPiedra) and ([x+j,y] not in nube)):
+                nube.append([x+j,y])
+            if ([x-j,y] in pixelPiedra and ([x-j,y] not in nube)):
+                nube.append([x-j,y])
+            if ([x,y+j] in pixelPiedra and ([x,y+j] not in nube)):
+                nube.append([x,y+j])
+            if ([x,y-j] in pixelPiedra and ([x,y-j] not in nube)):
+                nube.append([x,y-j])
 
-def minimo(nube,eje):
-    lista=[]
-    for i in range(len(nube)):
-        if (nube[i][eje] not in lista):
-            lista.append(nube[i][eje])
-    return min(lista)
-def maximo(nube,eje):
-    lista=[]
-    for i in range(len(nube)):
-        if (nube[i][eje] not in lista):
-            lista.append(nube[i][eje])
-    return max(lista)
-minx=minimo(nube,0)
-miny=minimo(nube,1)
-maxx=maximo(nube,0)
-maxy=maximo(nube,1)
-print(f'''
-    Inicio: [{minx},{miny}]
-    Fin: [{maxx},{maxy}]
-''')
+    def minimo(nube,eje):
+        lista=[]
+        for i in range(len(nube)):
+            if (nube[i][eje] not in lista):
+                lista.append(nube[i][eje])
+        return min(lista)
+    def maximo(nube,eje):
+        lista=[]
+        for i in range(len(nube)):
+            if (nube[i][eje] not in lista):
+                lista.append(nube[i][eje])
+        return max(lista)
+    xmin=minimo(nube,0)
+    ymin=minimo(nube,1)
+    xmax=maximo(nube,0)
+    ymax=maximo(nube,1)
+    if (((xmax-xmin)>16) and ((ymax-ymin)>16)):
+        listaNubes.append([xmin,xmax,ymin,ymax]) #Creo una lista con las coordenadas de todas las nubes dentro
+
+print("Cantidad de nubes: ",len(listaNubes))
+for i in range(len(listaNubes)):
+    print(listaNubes[i])
+'''
+importamos el modulo "ImageDraw", para crear cada linea se usa la función "line" la cual toma como argumento 3 argumentos, 
+los 2 primero son las coordenadas en su eje X e Y, el segundo (fill) seria la intensidad del color de cada linea, 
+y el argumento width, seria la anchura de la linea.
+'''
+draw = ImageDraw.Draw(image) #Con draw puedo dibujar en la imagen
+for i in range (len(listaNubes)):
+    xmin=listaNubes[i][0]
+    xmax=listaNubes[i][1]
+    ymin=listaNubes[i][2]
+    ymax=listaNubes[i][3]
+    draw.line( (xmin,ymin,xmax,ymin), fill="#ffff00",width=2 )
+    draw.line( (xmin,ymax,xmax,ymax), fill="#ffff00",width=2 )
+    draw.line( (xmin,ymin,xmin,ymax), fill="#ffff00",width=2 )
+    draw.line( (xmax,ymin,xmax,ymax), fill="#ffff00",width=2 )
+
+image.convert("RGB").save("ImagenConLineas.jpg")
 
 
 
