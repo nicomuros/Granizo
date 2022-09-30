@@ -20,7 +20,7 @@ entre el color recibido (el que está en la nube) y el color base de nube, es ne
 puede acarrear cierto "ruido"
 '''
 def analizarPixel(x, y, imagen):
-    pixelRGB=imagen.getpixel((365,73))#extraigo los valores rgb del pixel
+    pixelRGB=imagen.getpixel((x,y))#extraigo los valores rgb del pixel
     r=pixelRGB[0]
     g=pixelRGB[1]
     b=pixelRGB[2]
@@ -33,9 +33,36 @@ def analizarPixel(x, y, imagen):
     bmin=b-toleranciaRGB
     bmax=b+toleranciaRGB
 
-    if ((rmin <= 252 <= rmax)):
-        return True
+    rgb=[
+        [199,15,134],
+        [190,100,134],  #45-42 dBZ
+        [208,138,59],   #48-45 dBZ
+        [249,196,48],   #51-48 dBZ
+        [254,252,5],    #54-51 dBZ
+        [252,154,59],   #57-54 dBZ
+        [252,95,6],     #60-57 dBZ
+        [251,52,27],    #65-60 dBZ
+        [190,190,190],  #70-65 dBZ
+        [211,211,211]   #80-70 dBZ
+    ]
+    for i in range(9):
+        if ((rmin <= rgb[i][0] <= rmax) and (gmin <= rgb[i][1] <= gmax) and (bmin <= rgb[i][2] <= bmax)):
+            return True
+    return False
 
+
+#340 54 inicio
+#420 120 fin
 url_imagen="images/1918.gif"
 image_rgb=cargarImagen(url_imagen) #Cargo la imagen a la variable para poder trabajar con ella
-print(analizarPixel(365,73,image_rgb))
+
+#Creo una lista con TODOS los pixeles que son piedras
+pixelPiedra=[]
+for x in range(340,420):
+    for y in range(54,121):
+        if(analizarPixel(x,y,image_rgb)): #Analizo el pixel
+            pixelPiedra.append([x,y])
+
+print(pixelPiedra[0])
+
+
