@@ -57,7 +57,7 @@ def analizarPixel(x, y, imagen):
 #Creo una lista con TODOS los pixeles que son piedras
 pixelPiedra=[]
 for x in range(110,700):
-    for y in range(55,450):
+    for y in range(55,700):
         if(analizarPixel(x,y,image_rgb)): #Analizo el pixel
             pixelPiedra.append([x,y])
 
